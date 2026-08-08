@@ -1,0 +1,106 @@
+# ==========================================
+# Python / Bytecode / Cache
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / Packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Pytest / Coverage / Linting
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.cache
+.mypy_cache/
+.ruff_cache/
+
+# ==========================================
+# Django Specific
+# ==========================================
+# Database (SQLite)
+*.sqlite3
+*.sqlite3-journal
+*.db
+
+# Static files & Media
+staticfiles/
+media/
+
+# Environment-specific settings & secrets
+local_settings.py
+.env
+.env.*
+!.env.example
+secrets.json
+
+# Log files
+*.log
+logs/
+
+# Celery (if asynchronous workers are used)
+celerybeat-schedule
+celerybeat.pid
+
+# ==========================================
+# Virtual Environments
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# IDEs & Code Editors
+# ==========================================
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm / IntelliJ
+.idea/
+
+# Vim / Sublime / General Editors
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
