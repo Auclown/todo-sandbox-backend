@@ -1,0 +1,103 @@
+name: PR Quality & Security Guardrails
+on:
+  pull_request:
+    branches: [ "main"]
+jobs:
+  # -------------------------------------------------------------
+  # Job 1: Prevent Hardcoded Secrets (GitLeaks)
+  # -------------------------------------------------------------
+  secret-scan:
+    name: Secret Leak Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run GitLeaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # -------------------------------------------------------------
+  # Job 2: Linting and Django App Tests
+  # -------------------------------------------------------------
+  app-checks:
+    name: Django Tests & Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff # Blazing-fast Python linter
+
+      - name: Lint Code with Ruff
+        run: ruff check .
+
+      - name: Run Django Unit Tests
+        run: python manage.py test
+
+  # -------------------------------------------------------------
+  # Job 3: CodeQL Analysis (App vulnerabilities)
+  # -------------------------------------------------------------
+  codeql-analysis:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Initialise CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # -------------------------------------------------------------
+  # Job 4: Terraform - Security Check and Init
+  # -------------------------------------------------------------
+  terraform-checks:
+    name: Terraform Quality and Security
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 'latest'
+
+      - name: Check Terraform Formatting
+        run: terraform fmt -check
+
+      - name: Scan IaC with Trivy (Security Misconfigurations)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          exit-code: 1
+          severity: 'CRITICAL,HIGH'
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
