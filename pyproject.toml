@@ -15,3 +15,5 @@ select = [
     "I",  # isort (import sorting)
     "RUF", # Ruff-specific rules
 ]
+# Ignore E501 for auto-generated strings being too long
+ignore = ["E501"]
