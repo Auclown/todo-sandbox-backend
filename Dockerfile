@@ -1,6 +1,6 @@
 FROM python:3.14-slim
 
-# 1. Environment Variables: Configure Python behavior for containerized execution
+# 1. Environment Variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PORT=8080
