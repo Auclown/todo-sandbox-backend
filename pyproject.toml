@@ -1,0 +1,17 @@
+[tool.ruff]
+# Exclude auto-generated Django migrations and environment directories
+exclude = [
+    "**/migrations/*",
+    ".venv",
+    "venv",
+]
+
+[tool.ruff.lint]
+# Enable standard lint rules + import sorting (isort)
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # Pyflakes
+    "I",  # isort (import sorting)
+    "RUF", # Ruff-specific rules
+]
