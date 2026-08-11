@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
         with:
           fetch-depth: 0
 
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: Python Setup
         uses: actions/setup-python@v5
@@ -60,7 +60,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: Initialise CodeQL
         uses: github/codeql-action/init@v3
@@ -81,7 +81,7 @@ jobs:
         working-directory: ./terraform
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

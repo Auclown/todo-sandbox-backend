@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       # 1. OIDC Authentication to GCP via WIF
       - name: Authenticate to Google Cloud
