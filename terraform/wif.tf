@@ -61,6 +61,13 @@ resource "google_project_iam_member" "sa_secret_admin" {
   member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
 }
 
+# Allow the GitHub Actions Service Account to deploy workloads to GKE
+resource "google_project_iam_member" "sa_gke_developer" {
+  project = var.project_id
+  role    = "roles/container.developer"
+  member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
+}
+
 # Output the WIF Provider name needed by GitHub Actions
 output "wif_provider_name" {
   value = google_iam_workload_identity_pool_provider.github_provider.name

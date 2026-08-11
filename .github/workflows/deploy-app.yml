@@ -81,6 +81,12 @@ jobs:
           echo "✅ Container successfully built, scanned, and pushed!"
           echo "Target Registry URL: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
 
+      - name: Get GKE Cluster Credentials
+        uses: google-github-actions/get-gke-credentials@v3
+        with:
+          cluster_name: 'todo-cluster'
+          location: '${{ env.GAR_LOCATION }}'
+
       - name: Deploy to Kubernetes Cluster
         run: |
           # 1. Replace project-id-placeholder with secret
@@ -91,3 +97,6 @@ jobs:
 
           # 3. Apply manifests to cluster
           kubectl apply -f k8s/
+
+          # 4. Wait for zero-downtime rolling update to complete
+          kubectl rollout status deployment/todo-backend-deployment --timeout=180s
