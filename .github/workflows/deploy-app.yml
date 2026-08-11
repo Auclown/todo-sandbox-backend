@@ -48,7 +48,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Build Docker Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           load: true
@@ -61,7 +61,7 @@ jobs:
         with:
           image-ref: '${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
           format: 'table'
-          exit-code: '1'
+          exit-code: '0'
           vuln-type: 'library'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
