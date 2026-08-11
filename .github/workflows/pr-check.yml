@@ -1,7 +1,9 @@
 name: PR Quality & Security Guardrails
+
 on:
   pull_request:
-    branches: [ "main"]
+    branches: [ "main" ]
+
 jobs:
   # -------------------------------------------------------------
   # Job 1: Prevent Hardcoded Secrets (GitLeaks)
