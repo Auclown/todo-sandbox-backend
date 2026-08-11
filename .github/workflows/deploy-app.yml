@@ -80,3 +80,14 @@ jobs:
         run: |
           echo "✅ Container successfully built, scanned, and pushed!"
           echo "Target Registry URL: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+
+      - name: Deploy to Kubernetes Cluster
+        run: |
+          # 1. Replace project-id-placeholder with secret
+          sed -i 's|project-id-placeholder|${{ secrets.GCP_PROJECT_ID }}|g' k8s/deployment.yaml
+
+          # 2. Replace latest tag with the exact Git commit SHA
+          sed -i 's|todo-backend:latest|todo-backend:${{ github.sha }}|g' k8s/deployment.yaml
+
+          # 3. Apply manifests to cluster
+          kubectl apply -f k8s/
