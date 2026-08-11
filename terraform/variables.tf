@@ -8,3 +8,9 @@ variable "region" {
   type        = string
   default     = "australia-southeast1" # Sydney is closest to NZ/AU
 }
+
+variable "github_repository" {
+  description = "The GitHub repository"
+  type        = string
+  default     = "Auclown/todo-sandbox-backend"
+}

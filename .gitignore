@@ -56,6 +56,8 @@ local_settings.py
 .env.*
 !.env.example
 secrets.json
+*.json
+*.pem
 
 # Log files
 *.log
@@ -104,3 +106,9 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Terraform local state & plugins
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
