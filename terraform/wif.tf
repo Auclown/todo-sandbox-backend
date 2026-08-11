@@ -47,6 +47,13 @@ resource "google_project_iam_member" "sa_artifact_admin" {
   role    = "roles/artifactregistry.writer"
 }
 
+# 6. Grant Editor permissions to the deployment Service Account
+resource "google_project_iam_member" "sa_editor" {
+  project = var.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
+}
+
 # Output the WIF Provider name needed by GitHub Actions
 output "wif_provider_name" {
   value = google_iam_workload_identity_pool_provider.github_provider.name
