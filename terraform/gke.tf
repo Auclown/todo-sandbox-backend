@@ -10,7 +10,7 @@ resource "google_container_cluster" "primary" {
 
   master_authorized_networks_config {
     cidr_blocks {
-      cidr_block = "0.0.0.0/0"
+      cidr_block   = "0.0.0.0/0"
       display_name = "Allow GitHub Actions dynamic runners"
     }
   }
