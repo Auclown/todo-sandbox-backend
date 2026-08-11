@@ -40,17 +40,24 @@ resource "google_service_account_iam_member" "wif_binding" {
   member = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool.name}/attribute.repository/${var.github_repository}"
 }
 
-# 5. Grant necessary roles to the deployment Service Account
+# Grant necessary roles to the deployment Service Account
 resource "google_project_iam_member" "sa_artifact_admin" {
   project = var.project_id
   member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
   role    = "roles/artifactregistry.writer"
 }
 
-# 6. Grant Editor permissions to the deployment Service Account
+# Grant Editor permissions to the deployment Service Account
 resource "google_project_iam_member" "sa_editor" {
   project = var.project_id
   role    = "roles/editor"
+  member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
+}
+
+# Grant Secret Manager Admin permissions to the deployment Service Account
+resource "google_project_iam_member" "sa_secret_admin" {
+  project = var.project_id
+  role    = "roles/secretmanager.admin"
   member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
 }
 
