@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 4. Copy requirements first to leverage Docker layer cache
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
+RUN pip install --no-cache-dir --upgrade pip "setuptools>=78.1.1" "msgpack>=1.2.1" && \
+    pip install --no-cache-dir -r requirements.txt gunicorn
 
 # 5. Copy the source code
 COPY . .
