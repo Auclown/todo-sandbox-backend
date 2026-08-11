@@ -18,7 +18,7 @@ permissions:
 
 env:
   GAR_LOCATION: australia-southeast1
-  REPOSITORY: backend-repo
+  REPOSITORY: todo-backend-repo
   IMAGE_NAME: todo-image
 
 jobs:
@@ -68,7 +68,7 @@ jobs:
 
       - name: Push Container to Artifact Registry
         if: success()
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
