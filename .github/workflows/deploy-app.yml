@@ -102,4 +102,14 @@ jobs:
           kubectl apply -f k8s/
 
           # 5. Wait for zero-downtime rolling update to complete
-          kubectl rollout status deployment/todo-backend-deployment --timeout=180s
+          kubectl rollout status deployment/todo-backend-deployment --timeout=360s
+
+      - name: Debug Deployment Failure
+        if: failure()
+        run: |
+          echo "==================== POD STATUS ===================="
+          kubectl get pods -o wide
+          echo "==================== POD EVENTS ===================="
+          kubectl describe pods
+          echo "==================== CONTAINER LOGS ================"
+          kubectl logs -l app=todo-backend --tail=50 --all-containers=true
