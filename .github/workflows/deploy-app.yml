@@ -4,12 +4,12 @@ on:
     branches:
       - main
     paths:
-      - 'server/**'
-      - 'config/**'
-      - 'Dockerfile'
-      - 'requirements.txt'
-      - 'manage.py'
-      - '.github/workflows/deploy-app.yml'
+      - "server/**"
+      - "config/**"
+      - "Dockerfile"
+      - "requirements.txt"
+      - "manage.py"
+      - ".github/workflows/deploy-app.yml"
   workflow_dispatch:
 
 permissions:
@@ -19,7 +19,7 @@ permissions:
 env:
   GAR_LOCATION: australia-southeast1
   REPOSITORY: todo-backend-repo
-  IMAGE_NAME: todo-image
+  IMAGE_NAME: todo-backend
 
 jobs:
   build-scan-deploy:
@@ -34,8 +34,8 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
-          service_account: '${{ secrets.GCP_SA_EMAIL }}'
+          workload_identity_provider: "${{ secrets.GCP_WIF_PROVIDER }}"
+          service_account: "${{ secrets.GCP_SA_EMAIL }}"
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -59,12 +59,12 @@ jobs:
       - name: Scan Image with Trivy
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
-          image-ref: '${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
-          format: 'table'
-          exit-code: '0'
-          vuln-type: 'library'
+          image-ref: "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          format: "table"
+          exit-code: "0"
+          vuln-type: "library"
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
+          severity: "CRITICAL,HIGH"
 
       - name: Push Container to Artifact Registry
         if: success()
@@ -84,24 +84,21 @@ jobs:
       - name: Get GKE Cluster Credentials
         uses: google-github-actions/get-gke-credentials@v3
         with:
-          cluster_name: 'todo-cluster'
-          location: '${{ env.GAR_LOCATION }}'
+          cluster_name: "todo-cluster"
+          location: "${{ env.GAR_LOCATION }}"
 
       - name: Deploy to Kubernetes Cluster
         run: |
           # 1. Replace project-id-placeholder with secret
           sed -i 's|project-id-placeholder|${{ secrets.GCP_PROJECT_ID }}|g' k8s/deployment.yaml
 
-          # 2. Ensure consistent image name and project ID substitution
-          sed -i 's|todo-image:latest|todo-image:${{ github.sha }}|g' k8s/deployment.yaml
-
-          # 3. Replace latest tag with the exact Git commit SHA
+          # 2. Replace latest tag with the exact Git commit SHA
           sed -i 's|todo-backend:latest|todo-backend:${{ github.sha }}|g' k8s/deployment.yaml
 
-          # 4. Apply manifests to cluster
+          # 3. Apply manifests to cluster
           kubectl apply -f k8s/
 
-          # 5. Wait for zero-downtime rolling update to complete
+          # 4. Wait for zero-downtime rolling update to complete
           kubectl rollout status deployment/todo-backend-deployment --timeout=360s
 
       - name: Debug Deployment Failure
