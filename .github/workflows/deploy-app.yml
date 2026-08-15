@@ -86,8 +86,11 @@ jobs:
           # 1. Replace project-id-placeholder with secret
           sed -i 's|project-id-placeholder|${{ secrets.GCP_PROJECT_ID }}|g' k8s/deployment.yaml
 
-          # 2. Replace latest tag with the exact Git commit SHA
+          # 2. Ensure consistent image name and project ID substitution
+          sed -i 's|todo-image:latest|todo-image:${{ github.sha }}|g' k8s/deployment.yaml
+
+          # 3. Replace latest tag with the exact Git commit SHA
           sed -i 's|todo-backend:latest|todo-backend:${{ github.sha }}|g' k8s/deployment.yaml
 
-          # 3. Apply manifests to cluster
+          # 4. Apply manifests to cluster
           kubectl apply -f k8s/
