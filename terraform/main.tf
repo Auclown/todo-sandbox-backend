@@ -53,3 +53,8 @@ resource "google_project_service" "container_api" {
   service            = "container.googleapis.com"
   disable_on_destroy = false
 }
+
+resource "google_project_service" "cloud_sql" {
+  service            = "sqladmin.googleapis.com"
+  disable_on_destroy = false
+}

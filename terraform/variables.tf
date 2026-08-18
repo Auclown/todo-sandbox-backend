@@ -6,7 +6,7 @@ variable "project_id" {
 variable "region" {
   description = "GCP Region for resources"
   type        = string
-  default     = "australia-southeast1" # Sydney is closest to NZ/AU
+  default     = "australia-southeast1"
 }
 
 variable "github_repository" {
