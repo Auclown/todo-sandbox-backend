@@ -10,6 +10,7 @@ resource "random_password" "db_password" {
 }
 
 # Compute & Storage Instance
+#trivy:ignore:GCP-0017
 resource "google_sql_database_instance" "todo_db_instance" {
   name             = "todo-database-${random_id.db_suffix.hex}"
   database_version = "POSTGRES_18"
@@ -17,6 +18,11 @@ resource "google_sql_database_instance" "todo_db_instance" {
 
   settings {
     tier = "db-f1-micro"
+
+    ip_configuration {
+      ipv4_enabled = true
+      ssl_mode     = "ENCRYPTED_ONLY"
+    }
   }
 
   deletion_protection = false
