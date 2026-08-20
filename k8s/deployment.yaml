@@ -10,40 +10,73 @@ spec:
     matchLabels:
       app: todo-backend
   template:
-      metadata:
-        labels:
-          app: todo-backend
-      spec:
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 10001
-          runAsGroup: 10001
-          fsGroup: 10001
-        containers:
-          - name: todo-backend
-            image: australia-southeast1-docker.pkg.dev/project-id-placeholder/todo-backend-repo/todo-backend:latest
-            imagePullPolicy: Always
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop:
-                  - ALL
-            ports:
-              - containerPort: 8080
-            resources:
-              requests:
-                cpu: "100m"
-                memory: "128Mi"
-              limits:
-                cpu: "250m"
-                memory: "256Mi"
-            env:
-              - name: PYTHONUNBUFFERED
-                value: "1"
-            volumeMounts:
-              - mountPath: /tmp
-                name: tmp-volume
-        volumes:
-          - name: tmp-volume
-            emptyDir: {}
+    metadata:
+      labels:
+        app: todo-backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        # Container 1: Django App
+        - name: todo-backend
+          image: australia-southeast1-docker.pkg.dev/project-id-placeholder/todo-backend-repo/todo-backend:latest
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: "DB_NAME"
+              value: "todo_db"
+            - name: "DB_USER"
+              value: "todo_db_user"
+            - name: "DB_PASSWORD"
+              value: "DB_PASSWORD_PLACEHOLDER"
+            - name: "DB_HOST"
+              value: "127.0.0.1"
+            - name: "DB_PORT"
+              value: "5432"
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+
+        # Container 2: Cloud SQL Proxy
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
+          args:
+            - "--port=5432"
+            - "DB_CONNECTION_NAME_PLACEHOLDER"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "150m"
+              memory: "128Mi"
+
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
