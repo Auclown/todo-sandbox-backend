@@ -89,16 +89,22 @@ jobs:
 
       - name: Deploy to Kubernetes Cluster
         run: |
-          # 1. Replace project-id-placeholder with secret
+          # 1. Fetch Cloud SQL connection name from GCP
+          DB_CONN_NAME=$(gcloud sql instances describe $(gcloud sql instances list --format="value(name)" --filter="name ~ todo-db-instance") --format="value(connectionName)")
+
+          # 2. Fetch DB password from Secrets Manager
+          DB_PASS=$(gcloud secrets versions access latest --secret="db-password")
+          
+          # 3. Substitute placeholders into k8s/deployment.yaml 
           sed -i 's|project-id-placeholder|${{ secrets.GCP_PROJECT_ID }}|g' k8s/deployment.yaml
-
-          # 2. Replace latest tag with the exact Git commit SHA
           sed -i 's|todo-backend:latest|todo-backend:${{ github.sha }}|g' k8s/deployment.yaml
+          sed -i 's|DB_CONNECTION_NAME_PLACEHOLDER|${DB_CONN_NAME}|g' k8s/deployment.yaml
+          sed -i 's|DB_PASSWORD_PLACEHOLDER|${DB_PASS}|g' k8s/deployment.yaml
 
-          # 3. Apply manifests to cluster
+          # 4. Apply manifests to cluster
           kubectl apply -f k8s/
 
-          # 4. Wait for zero-downtime rolling update to complete
+          # 5. Wait for zero-downtime rolling update to complete
           kubectl rollout status deployment/todo-backend-deployment --timeout=360s
 
       - name: Debug Deployment Failure
@@ -110,3 +116,7 @@ jobs:
           kubectl describe pods
           echo "==================== CONTAINER LOGS ================"
           kubectl logs -l app=todo-backend --tail=50 --all-containers=true
+
+      - name: Run Django Migrations
+        run: |
+          kubectl exec deployment/todo-backend-deployment -c todo-backend -- python manage.py migrate
