@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'server.config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-if os.environ.get('USE_POSTGRES') == 'True':
+if os.environ.get('DB_NAME'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
