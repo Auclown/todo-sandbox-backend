@@ -103,10 +103,10 @@ jobs:
           DB_PASS=$(gcloud secrets versions access latest --secret="db-password")
 
           # 3. Substitute placeholders into k8s/deployment.yaml 
-          sed -i 's|project-id-placeholder|${{ secrets.GCP_PROJECT_ID }}|g' k8s/deployment.yaml
-          sed -i 's|todo-backend:latest|todo-backend:${{ github.sha }}|g' k8s/deployment.yaml
-          sed -i 's|DB_CONNECTION_NAME_PLACEHOLDER|${DB_CONN_NAME}|g' k8s/deployment.yaml
-          sed -i 's|DB_PASSWORD_PLACEHOLDER|${DB_PASS}|g' k8s/deployment.yaml
+          sed -i "s|project-id-placeholder|${{ secrets.GCP_PROJECT_ID }}|g" k8s/deployment.yaml
+          sed -i "s|todo-backend:latest|todo-backend:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|DB_CONNECTION_NAME_PLACEHOLDER|${DB_CONN_NAME}|g" k8s/deployment.yaml
+          sed -i "s|DB_PASSWORD_PLACEHOLDER|${DB_PASS}|g" k8s/deployment.yaml
 
           # 4. Apply manifests to cluster
           kubectl apply -f k8s/
