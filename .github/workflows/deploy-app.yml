@@ -90,11 +90,18 @@ jobs:
       - name: Deploy to Kubernetes Cluster
         run: |
           # 1. Fetch Cloud SQL connection name from GCP
-          DB_CONN_NAME=$(gcloud sql instances describe $(gcloud sql instances list --format="value(name)" --filter="name ~ todo-db-instance") --format="value(connectionName)")
+          DB_CONN_NAME=$(gcloud sql instances list --filter="name ~ todo" --format="value(connectionName)" --limit=1)
+
+          if [ -z "$DB_CONN_NAME" ]; then
+            echo "ERROR: No Cloud SQL instance found matching 'todo'!"
+            exit 1
+          fi
+
+          echo "Found Cloud SQL connection name: ${DB_CONN_NAME}"
 
           # 2. Fetch DB password from Secrets Manager
           DB_PASS=$(gcloud secrets versions access latest --secret="db-password")
-          
+
           # 3. Substitute placeholders into k8s/deployment.yaml 
           sed -i 's|project-id-placeholder|${{ secrets.GCP_PROJECT_ID }}|g' k8s/deployment.yaml
           sed -i 's|todo-backend:latest|todo-backend:${{ github.sha }}|g' k8s/deployment.yaml
