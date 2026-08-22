@@ -4,11 +4,16 @@ on:
     branches:
       - main
     paths:
+      # Application logic and settings
       - "server/**"
-      - "config/**"
+
+      # Build & dependency files at repo root
       - "Dockerfile"
       - "requirements.txt"
       - "manage.py"
+
+      # Kubernetes manifests & the workflow itself
+      - "k8s/**"
       - ".github/workflows/deploy-app.yml"
   workflow_dispatch:
 
