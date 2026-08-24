@@ -1,7 +1,7 @@
 terraform {
   required_version = ">= 1.5.0"
 
-  # Configure Centralized Remote State in GCS
+  # Configure Centralised Remote State in GCS
   backend "gcs" {
     prefix = "terraform/state"
   }
