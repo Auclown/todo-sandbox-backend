@@ -1,6 +1,6 @@
 # 1. Create Workload Identity Pool
 resource "google_iam_workload_identity_pool" "github_pool" {
-  workload_identity_pool_id = "github-actions-pool"
+  workload_identity_pool_id = "github-actions-pool-v2"
   display_name              = "GitHub Actions Pool"
   description               = "Identity pool for GitHub Actions pipelines"
 }
